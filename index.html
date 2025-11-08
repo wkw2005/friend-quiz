@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你是哪种朋友类型？- 小红书风格互动测试</title>
+    <link rel="stylesheet" href="https://autoglm-api.zhipuai.cn/ppt-proxy/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FF2442;
+            --secondary-color: #FF6B6B;
+            --tertiary-color: #FF9E7D;
+            --quaternary-color: #FFD166;
+            --quinary-color: #06D6A0;
+            --background-color: #FFF8F7;
+            --text-color: #333333;
+            --card-shadow: 0 8px 30px rgba(255, 36, 66, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景渐变效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 248, 247, 0.9) 0%, rgba(255, 209, 102, 0.2) 100%);
+            z-index: -1;
+        }
+
+        /* 加载动画 */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 8px solid rgba(255, 36, 66, 0.1);
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 容器样式 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 头部样式 */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* 进度条样式 */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 36, 66, 0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* 问题卡片样式 */
+        .question-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.5s forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        /* 选项样式 */
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 247, 0.9));
+            border: 2px solid rgba(255, 36, 66, 0.1);
+            border-radius: 15px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 36, 66, 0.05), rgba(255, 158, 125, 0.05));
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        .option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 36, 66, 0.1);
+        }
+
+        .option:hover::before {
+            width: 100%;
+        }
+
+        .option.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(255, 36, 66, 0.05), rgba(255, 158, 125, 0.05));
+        }
+
+        .option-text {
+            position: relative;
+            z-index: 1;
+            font-size: 1.1rem;
+        }
+
+        /* 按钮样式 */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(255, 36, 66, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover::before {
+            transform: translateX(0);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 36, 66, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 结果页面样式 */
+        .result-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s forwards;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 36, 66, 0.1), rgba(255, 158, 125, 0.1));
+            z-index: 0;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-type {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            margin: 0 auto 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .share-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .share-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 36, 66, 0.3);
+        }
+
+        /* 重新测试按钮 */
+        .restart-btn {
+            background: linear-gradient(90deg, var(--quinary-color), var(--quaternary-color));
+            margin-top: 20px;
+        }
+
+        /* 提示信息样式 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .question-card {
+                padding: 20px;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .option-text {
+                font-size: 1rem;
+            }
+            
+            .result-card {
+                padding: 30px 20px;
+            }
+            
+            .result-title {
+                font-size: 1.7rem;
+            }
+            
+            .result-type {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* 视差滚动效果 */
+        .parallax-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .parallax-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            top: -150px;
+            right: -150px;
+        }
+
+        .parallax-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--tertiary-color), var(--quaternary-color));
+            bottom: -100px;
+            left: -100px;
+        }
+
+        .parallax-3 {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--quinary-color), var(--primary-color));
+            top: 50%;
+            left: 10%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loader-container" id="loader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- 视差元素 -->
+    <div class="parallax-element parallax-1"></div>
+    <div class="parallax-element parallax-2"></div>
+    <div class="parallax-element parallax-3"></div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <header>
+            <h1>测测你是哪种朋友类型？</h1>
+            <p class="subtitle">5道题，解锁你的社交人格，快分享给朋友们看看吧！</p>
+        </header>
+
+        <!-- 进度条 -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <!-- 问题卡片 -->
+        <div class="question-card" id="question-card">
+            <div class="question-number" id="question-number">问题 1/5</div>
+            <h2 class="question-text" id="question-text">周末朋友约你出去玩，你通常会？</h2>
+            <div class="options" id="options">
+                <div class="option" data-value="A">
+                    <p class="option-text">欣然前往，并主动规划活动内容</p>
+                </div>
+                <div class="option" data-value="B">
+                    <p class="option-text">看心情，如果感兴趣就去</p>
+                </div>
+                <div class="option" data-value="C">
+                    <p class="option-text">先问清楚都有谁，再决定是否参加</p>
+                </div>
+                <div class="option" data-value="D">
+                    <p class="option-text">婉拒，更愿意自己安排时间</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 下一题按钮 -->
+        <div class="btn-container">
+            <button class="btn" id="next-btn" disabled>下一题</button>
+        </div>
+
+        <!-- 结果页面 -->
+        <div class="result-container" id="result-container">
+            <div class="result-card">
+                <h2 class="result-title">你的朋友类型是</h2>
+                <div class="result-type" id="result-type">阳光领袖型</div>
+                <img class="result-image" id="result-image" src="" alt="朋友类型图片">
+                <div class="result-description" id="result-description">
+                    你是朋友圈中的核心人物，总是充满活力和正能量。你善于组织活动，乐于助人，朋友们都喜欢围绕在你身边。你有着天生的领导才能，能够轻松调动气氛，让每个人都感到舒适和快乐。不过，有时候你可能会过于在意别人的感受，需要学会适当表达自己的需求。
+                </div>
+                <div class="share-container">
+                    <div class="share-btn" id="share-wechat" title="分享到微信">
+                        <i class="fab fa-weixin"></i>
+                    </div>
+                    <div class="share-btn" id="share-weibo" title="分享到微博">
+                        <i class="fab fa-weibo"></i>
+                    </div>
+                    <div class="share-btn" id="share-qq" title="分享到QQ">
+                        <i class="fab fa-qq"></i>
+                    </div>
+                    <div class="share-btn" id="copy-link" title="复制链接">
+                        <i class="fas fa-link"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-container">
+                <button class="btn restart-btn" id="restart-btn">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示信息 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 问题数据
+        const questions = [
+            {
+                question: "周末朋友约你出去玩，你通常会？",
+                options: {
+                    A: "欣然前往，并主动规划活动内容",
+                    B: "看心情，如果感兴趣就去",
+                    C: "先问清楚都有谁，再决定是否参加",
+                    D: "婉拒，更愿意自己安排时间"
+                }
+            },
+            {
+                question: "朋友向你倾诉烦恼时，你倾向于？",
+                options: {
+                    A: "认真倾听，并给出具体建议",
+                    B: "陪伴左右，让TA知道你在支持TA",
+                    C: "分析问题，帮助TA找到解决方案",
+                    D: "转移注意力，带TA去做些开心的事"
+                }
+            },
+            {
+                question: "在朋友圈中，你通常是？",
+                options: {
+                    A: "活跃分子，经常组织聚会",
+                    B: "开心果，总能逗乐大家",
+                    C: "倾听者，朋友们愿意向你倾诉",
+                    D: "观察者，更喜欢小范围深度交流"
+                }
+            },
+            {
+                question: "朋友生日时，你倾向于？",
+                options: {
+                    A: "精心准备惊喜派对",
+                    B: "送一份有特殊意义的礼物",
+                    C: "写一封走心的长信或卡片",
+                    D: "简单祝福，避免过于隆重"
+                }
+            },
+            {
+                question: "当朋友之间发生矛盾时，你会？",
+                options: {
+                    A: "主动调解，帮助双方和解",
+                    B: "分别倾听，但不介入太深",
+                    C: "分析问题，给出客观建议",
+                    D: "保持距离，避免被卷入其中"
+                }
+            }
+        ];
+
+        // 结果类型数据
+        const resultTypes = {
+            "阳光领袖型": {
+                description: "你是朋友圈中的核心人物，总是充满活力和正能量。你善于组织活动，乐于助人，朋友们都喜欢围绕在你身边。你有着天生的领导才能，能够轻松调动气氛，让每个人都感到舒适和快乐。不过，有时候你可能会过于在意别人的感受，需要学会适当表达自己的需求。",
+                image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+            },
+            "温暖治愈型": {
+                description: "你是朋友们的情感依靠，总是能在他们需要时给予温暖和支持。你善解人意，能够敏锐地察觉他人的情绪变化，并给予适当的安慰。你的存在就像一缕阳光，能够照亮朋友们阴霾的心情。不过，有时候你可能会过于为他人着想，而忽略了自己的感受。",
+                image: "https://images.unsplash.com/photo-1521139460451-d7e402704a5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+            },
+            "智慧分析型": {
+                description: "你是朋友圈中的智囊，总能给出理性而深刻的建议。你善于分析问题，能够从多个角度看待事物，帮助朋友们理清思路。你的冷静和理性在朋友遇到困难时尤为珍贵。不过，有时候你可能会过于理性，而忽略了情感因素的重要性。",
+                image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+            },
+            "独立自由型": {
+                description: "你是一个独立自主的人，珍视自己的空间和自由。你不会过度依赖朋友，也不喜欢被过度依赖。你有着自己独特的价值观和生活方式，不会轻易被他人影响。你的朋友们欣赏你的真实和独立，但也希望你能更多地参与到集体活动中来。",
+                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+            }
+        };
+
+        // 测试状态
+        let currentQuestion = 0;
+        let answers = [];
+        let selectedOption = null;
+
+        // DOM元素
+        const loader = document.getElementById('loader');
+        const questionCard = document.getElementById('question-card');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const resultContainer = document.getElementById('result-container');
+        const resultType = document.getElementById('result-type');
+        const resultImage = document.getElementById('result-image');
+        const resultDescription = document.getElementById('result-description');
+        const restartBtn = document.getElementById('restart-btn');
+        const toast = document.getElementById('toast');
+
+        // 分享按钮
+        const shareWechat = document.getElementById('share-wechat');
+        const shareWeibo = document.getElementById('share-weibo');
+        const shareQQ = document.getElementById('share-qq');
+        const copyLink = document.getElementById('copy-link');
+
+        // 初始化
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1000);
+
+            renderQuestion();
+            setupEventListeners();
+            setupParallaxEffect();
+        });
+
+        // 渲染问题
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            questionNumber.textContent = `问题 ${currentQuestion + 1}/${questions.length}`;
+            questionText.textContent = question.question;
+            
+            // 清空选项容器
+            optionsContainer.innerHTML = '';
+            
+            // 添加选项
+            for (const [key, value] of Object.entries(question.options)) {
+                const option = document.createElement('div');
+                option.className = 'option';
+                option.setAttribute('data-value', key);
+                
+                const optionText = document.createElement('p');
+                optionText.className = 'option-text';
+                optionText.textContent = value;
+                
+                option.appendChild(optionText);
+                optionsContainer.appendChild(option);
+                
+                // 添加点击事件
+                option.addEventListener('click', selectOption);
+            }
+            
+            // 更新进度条
+            updateProgressBar();
+            
+            // 重置按钮状态
+            nextBtn.disabled = true;
+            selectedOption = null;
+            
+            // 添加动画效果
+            questionCard.style.animation = 'none';
+            setTimeout(() => {
+                questionCard.style.animation = 'slideUp 0.5s forwards';
+            }, 10);
+        }
+
+        // 选择选项
+        function selectOption(e) {
+            // 移除所有选项的选中状态
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // 添加当前选项的选中状态
+            const option = e.currentTarget;
+            option.classList.add('selected');
+            
+            // 记录选中的选项
+            selectedOption = option.getAttribute('data-value');
+            
+            // 启用下一题按钮
+            nextBtn.disabled = false;
+        }
+
+        // 更新进度条
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 下一题按钮
+            nextBtn.addEventListener('click', () => {
+                if (selectedOption) {
+                    // 记录答案
+                    answers.push(selectedOption);
+                    
+                    // 如果是最后一题，显示结果
+                    if (currentQuestion === questions.length - 1) {
+                        showResult();
+                    } else {
+                        // 否则，显示下一题
+                        currentQuestion++;
+                        renderQuestion();
+                    }
+                }
+            });
+            
+            // 重新测试按钮
+            restartBtn.addEventListener('click', () => {
+                // 重置测试状态
+                currentQuestion = 0;
+                answers = [];
+                selectedOption = null;
+                
+                // 隐藏结果页面，显示问题卡片
+                resultContainer.style.display = 'none';
+                questionCard.style.display = 'block';
+                nextBtn.style.display = 'block';
+                
+                // 重新渲染问题
+                renderQuestion();
+            });
+            
+            // 分享按钮
+            shareWechat.addEventListener('click', () => {
+                showToast('请使用微信扫描二维码分享');
+            });
+            
+            shareWeibo.addEventListener('click', () => {
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent('测测你是哪种朋友类型？');
+                window.open(`https://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
+            });
+            
+            shareQQ.addEventListener('click', () => {
+                const url = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent('测测你是哪种朋友类型？');
+                window.open(`https://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}`, '_blank');
+            });
+            
+            copyLink.addEventListener('click', () => {
+                const url = window.location.href;
+                
+                // 尝试使用现代 Clipboard API
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url)
+                        .then(() => {
+                            showToast('链接已复制到剪贴板');
+                        })
+                        .catch(err => {
+                            // 如果现代 API 失败，使用传统方法
+                            fallbackCopyTextToClipboard(url);
+                        });
+                } else {
+                    // 如果不支持现代 API，使用传统方法
+                    fallbackCopyTextToClipboard(url);
+                }
+            });
+        }
+
+        // 传统复制文本到剪贴板方法
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // 避免滚动到页面底部
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('链接已复制到剪贴板');
+                } else {
+                    showToast('复制失败，请手动复制链接');
+                }
+            } catch (err) {
+                showToast('复制失败，请手动复制链接');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // 显示结果
+        function showResult() {
+            // 计算结果类型
+            const result = calculateResult();
+            
+            // 隐藏问题卡片和按钮
+            questionCard.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
+            // 显示结果
+            resultType.textContent = result.type;
+            resultImage.src = result.image;
+            resultDescription.textContent = result.description;
+            
+            // 显示结果容器
+            resultContainer.style.display = 'block';
+            
+            // 添加动画效果
+            resultContainer.style.animation = 'none';
+            setTimeout(() => {
+                resultContainer.style.animation = 'fadeIn 0.8s forwards';
+            }, 10);
+        }
+
+        // 计算结果类型
+        function calculateResult() {
+            // 统计每个选项的数量
+            const count = {
+                A: 0,
+                B: 0,
+                C: 0,
+                D: 0
+            };
+            
+            answers.forEach(answer => {
+                count[answer]++;
+            });
+            
+            // 找出最多的选项
+            let maxCount = 0;
+            let maxOption = 'A';
+            
+            for (const [option, optionCount] of Object.entries(count)) {
+                if (optionCount > maxCount) {
+                    maxCount = optionCount;
+                    maxOption = option;
+                }
+            }
+            
+            // 根据最多的选项确定结果类型
+            let type;
+            switch (maxOption) {
+                case 'A':
+                    type = '阳光领袖型';
+                    break;
+                case 'B':
+                    type = '温暖治愈型';
+                    break;
+                case 'C':
+                    type = '智慧分析型';
+                    break;
+                case 'D':
+                    type = '独立自由型';
+                    break;
+            }
+            
+            // 返回结果
+            return {
+                type: type,
+                image: resultTypes[type].image,
+                description: resultTypes[type].description
+            };
+        }
+
+        // 显示提示信息
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 设置视差滚动效果
+        function setupParallaxEffect() {
+            const parallaxElements = document.querySelectorAll('.parallax-element');
+            
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                
+                parallaxElements.forEach((element, index) => {
+                    const speed = 0.5 + (index * 0.2);
+                    const yPos = -(scrollY * speed);
+                    element.style.transform = `translateY(${yPos}px)`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
