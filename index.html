@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>测测你是哪种朋友类型？- 小红书风格互动测试</title>
-    <link rel="stylesheet" href="https://autoglm-api.zhipuai.cn/ppt-proxy/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://autoglm-api.zhipuai.cn/ppt-proxy/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #FF2442;
@@ -70,7 +72,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* 容器样式 */
@@ -393,27 +397,27 @@
             h1 {
                 font-size: 2rem;
             }
-            
+
             .question-card {
                 padding: 20px;
             }
-            
+
             .question-text {
                 font-size: 1.1rem;
             }
-            
+
             .option-text {
                 font-size: 1rem;
             }
-            
+
             .result-card {
                 padding: 30px 20px;
             }
-            
+
             .result-title {
                 font-size: 1.7rem;
             }
-            
+
             .result-type {
                 font-size: 1.3rem;
             }
@@ -451,7 +455,18 @@
             left: 10%;
         }
     </style>
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?d1c517edee87f98796ebc93b275cdceb";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
 </head>
+
 <body>
     <!-- 加载动画 -->
     <div class="loader-container" id="loader">
@@ -648,34 +663,34 @@
             const question = questions[currentQuestion];
             questionNumber.textContent = `问题 ${currentQuestion + 1}/${questions.length}`;
             questionText.textContent = question.question;
-            
+
             // 清空选项容器
             optionsContainer.innerHTML = '';
-            
+
             // 添加选项
             for (const [key, value] of Object.entries(question.options)) {
                 const option = document.createElement('div');
                 option.className = 'option';
                 option.setAttribute('data-value', key);
-                
+
                 const optionText = document.createElement('p');
                 optionText.className = 'option-text';
                 optionText.textContent = value;
-                
+
                 option.appendChild(optionText);
                 optionsContainer.appendChild(option);
-                
+
                 // 添加点击事件
                 option.addEventListener('click', selectOption);
             }
-            
+
             // 更新进度条
             updateProgressBar();
-            
+
             // 重置按钮状态
             nextBtn.disabled = true;
             selectedOption = null;
-            
+
             // 添加动画效果
             questionCard.style.animation = 'none';
             setTimeout(() => {
@@ -689,14 +704,14 @@
             document.querySelectorAll('.option').forEach(option => {
                 option.classList.remove('selected');
             });
-            
+
             // 添加当前选项的选中状态
             const option = e.currentTarget;
             option.classList.add('selected');
-            
+
             // 记录选中的选项
             selectedOption = option.getAttribute('data-value');
-            
+
             // 启用下一题按钮
             nextBtn.disabled = false;
         }
@@ -714,7 +729,7 @@
                 if (selectedOption) {
                     // 记录答案
                     answers.push(selectedOption);
-                    
+
                     // 如果是最后一题，显示结果
                     if (currentQuestion === questions.length - 1) {
                         showResult();
@@ -725,43 +740,43 @@
                     }
                 }
             });
-            
+
             // 重新测试按钮
             restartBtn.addEventListener('click', () => {
                 // 重置测试状态
                 currentQuestion = 0;
                 answers = [];
                 selectedOption = null;
-                
+
                 // 隐藏结果页面，显示问题卡片
                 resultContainer.style.display = 'none';
                 questionCard.style.display = 'block';
                 nextBtn.style.display = 'block';
-                
+
                 // 重新渲染问题
                 renderQuestion();
             });
-            
+
             // 分享按钮
             shareWechat.addEventListener('click', () => {
                 showToast('请使用微信扫描二维码分享');
             });
-            
+
             shareWeibo.addEventListener('click', () => {
                 const url = encodeURIComponent(window.location.href);
                 const title = encodeURIComponent('测测你是哪种朋友类型？');
                 window.open(`https://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
             });
-            
+
             shareQQ.addEventListener('click', () => {
                 const url = encodeURIComponent(window.location.href);
                 const title = encodeURIComponent('测测你是哪种朋友类型？');
                 window.open(`https://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}`, '_blank');
             });
-            
+
             copyLink.addEventListener('click', () => {
                 const url = window.location.href;
-                
+
                 // 尝试使用现代 Clipboard API
                 if (navigator.clipboard) {
                     navigator.clipboard.writeText(url)
@@ -783,16 +798,16 @@
         function fallbackCopyTextToClipboard(text) {
             const textArea = document.createElement("textarea");
             textArea.value = text;
-            
+
             // 避免滚动到页面底部
             textArea.style.top = "0";
             textArea.style.left = "0";
             textArea.style.position = "fixed";
-            
+
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
-            
+
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
@@ -803,7 +818,7 @@
             } catch (err) {
                 showToast('复制失败，请手动复制链接');
             }
-            
+
             document.body.removeChild(textArea);
         }
 
@@ -811,19 +826,19 @@
         function showResult() {
             // 计算结果类型
             const result = calculateResult();
-            
+
             // 隐藏问题卡片和按钮
             questionCard.style.display = 'none';
             nextBtn.style.display = 'none';
-            
+
             // 显示结果
             resultType.textContent = result.type;
             resultImage.src = result.image;
             resultDescription.textContent = result.description;
-            
+
             // 显示结果容器
             resultContainer.style.display = 'block';
-            
+
             // 添加动画效果
             resultContainer.style.animation = 'none';
             setTimeout(() => {
@@ -840,22 +855,22 @@
                 C: 0,
                 D: 0
             };
-            
+
             answers.forEach(answer => {
                 count[answer]++;
             });
-            
+
             // 找出最多的选项
             let maxCount = 0;
             let maxOption = 'A';
-            
+
             for (const [option, optionCount] of Object.entries(count)) {
                 if (optionCount > maxCount) {
                     maxCount = optionCount;
                     maxOption = option;
                 }
             }
-            
+
             // 根据最多的选项确定结果类型
             let type;
             switch (maxOption) {
@@ -872,7 +887,7 @@
                     type = '独立自由型';
                     break;
             }
-            
+
             // 返回结果
             return {
                 type: type,
@@ -885,7 +900,7 @@
         function showToast(message) {
             toast.textContent = message;
             toast.classList.add('show');
-            
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
@@ -894,10 +909,10 @@
         // 设置视差滚动效果
         function setupParallaxEffect() {
             const parallaxElements = document.querySelectorAll('.parallax-element');
-            
+
             window.addEventListener('scroll', () => {
                 const scrollY = window.scrollY;
-                
+
                 parallaxElements.forEach((element, index) => {
                     const speed = 0.5 + (index * 0.2);
                     const yPos = -(scrollY * speed);
@@ -907,4 +922,5 @@
         }
     </script>
 </body>
+
 </html>
